@@ -5,6 +5,7 @@ import { FaHome, FaEdit, FaTrash } from "react-icons/fa";
 import api from "../api/api";
 import { AuthContext } from "../context/AuthContext";
 import NavbarComponent from "../components/Navbar";
+
 interface Room {
   id: number;
   tipo: string;
@@ -39,18 +40,31 @@ const RoomsPage = () => {
     fetchRooms();
   }, [hotelId, auth?.token]);
 
+  const handleDeleteRoom = async (roomId: number) => {
+    if (!window.confirm("¿Estás seguro de que quieres eliminar esta habitación?")) {
+      return;
+    }
+
+    try {
+      await api.delete(`/habitaciones/${roomId}`, {
+        headers: { Authorization: `Bearer ${auth?.token}` },
+      });
+
+      // Actualizar la lista de habitaciones después de eliminar
+      setRooms((prevRooms) => prevRooms.filter((room) => room.id !== roomId));
+    } catch (error) {
+      console.error("Error al eliminar la habitación", error);
+    }
+  };
 
   const totalAsignadas = rooms.reduce((sum, room) => sum + room.cantidad, 0);
   const habitacionesRestantes = (hotel?.capacidad || 0) - totalAsignadas;
 
   return (
     <Container>
-      
       <NavbarComponent />
       <div className="d-flex justify-content-between align-items-center my-4">
-        <h3>
-          Habitaciones: {hotel?.nombre}
-        </h3>
+        <h3>Habitaciones: {hotel?.nombre}</h3>
         <Button variant="success" onClick={() => navigate(`/assign-room/${hotelId}`)}>
           + Asignar Habitación
         </Button>
@@ -58,12 +72,12 @@ const RoomsPage = () => {
           ← Volver
         </Button>
       </div>
-      
+
       <div className="d-flex justify-content-between align-items-center bg-light p-3 rounded">
-    <p className="mb-0"><strong>Capacidad Total:</strong> {hotel?.capacidad}</p>
-    <p className="mb-0"><strong>Habitaciones Asignadas:</strong> {totalAsignadas}</p>
-    <p className="mb-0"><strong>Habitaciones Restantes:</strong> {habitacionesRestantes < 0 ? 0 : habitacionesRestantes}</p>
-  </div>
+        <p className="mb-0"><strong>Capacidad Total:</strong> {hotel?.capacidad}</p>
+        <p className="mb-0"><strong>Habitaciones Asignadas:</strong> {totalAsignadas}</p>
+        <p className="mb-0"><strong>Habitaciones Restantes:</strong> {habitacionesRestantes < 0 ? 0 : habitacionesRestantes}</p>
+      </div>
 
       <Row>
         {rooms.map((room) => (
@@ -75,10 +89,10 @@ const RoomsPage = () => {
                 <Card.Text>{room.acomodacion}</Card.Text>
                 <Card.Text><strong>Cantidad:</strong> {room.cantidad}</Card.Text>
                 <div className="d-flex justify-content-center gap-2 mt-2">
-                <Button variant="outline-success" onClick={() => navigate(`/edit-room/${hotelId}/${room.id}`)}>
-                <FaEdit />
-              </Button>
-                  <Button variant="outline-danger">
+                  <Button variant="outline-success" onClick={() => navigate(`/edit-room/${hotelId}/${room.id}`)}>
+                    <FaEdit />
+                  </Button>
+                  <Button variant="outline-danger" onClick={() => handleDeleteRoom(room.id)}>
                     <FaTrash />
                   </Button>
                 </div>
@@ -92,3 +106,4 @@ const RoomsPage = () => {
 };
 
 export default RoomsPage;
+

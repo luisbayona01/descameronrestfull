@@ -114,6 +114,12 @@ const AssignRoomPage = () => {
   return (
     <Container className="mt-5">
       <NavbarComponent />
+           <div className="d-flex justify-content-between align-items-center my-4">
+       
+        <Button variant="secondary" onClick={() => navigate(`/rooms/${hotelId}`)}>
+  ← Volver
+</Button>
+</div>
       <h2>Asignar Habitación</h2>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="tipoHabitacionSelect" className="mt-3">
