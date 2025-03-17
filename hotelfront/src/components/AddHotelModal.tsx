@@ -1,72 +1,14 @@
-import { useState, useEffect, useContext } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import { AuthContext } from "../context/AuthContext";
-import api from "../api/api";
+import useAddHotel from "../hooks/useAddHotel";
 
 interface Props {
   show: boolean;
   onClose: () => void;
-  onCreate: (
-    nombre: string,
-    direccion: string,
-    ciudadId: string,
-    nit: string,
-    numeroHabitaciones: number
-  ) => void;
+  onCreate: () => void;
 }
 
 const AddHotelModal = ({ show, onClose, onCreate }: Props) => {
-  const auth = useContext(AuthContext);
-  const [nombre, setNombre] = useState("");
-  const [direccion, setDireccion] = useState("");
-  const [ciudadId, setCiudadId] = useState("");
-  const [nit, setNit] = useState("");
-  const [numeroHabitaciones, setNumeroHabitaciones] = useState<number>(0);
-  const [ciudades, setCiudades] = useState<{ id: string; nombre: string }[]>([]);
-  const [validated, setValidated] = useState(false);
-
-  useEffect(() => {
-    const fetchCiudades = async () => {
-      try {
-        const response = await api.get("/ciudades", {
-          headers: { Authorization: `Bearer ${auth?.token}` },
-        });
-
-        //console.log("Respuesta de API /hoteles:", response.data);
-
-        if (Array.isArray(response.data)) {
-          setCiudades(response.data);
-        } else {
-          //console.error("La API no devolvió un array:", response.data);
-          setCiudades([]); // Fallback a un array vacío
-        }
-      } catch (error) {
-        console.error("Error al obtener hoteles", error);
-        setCiudades([]); // Manejo de error asegurando un array vacío
-      }
-    };
-
-    fetchCiudades();
-  }, [auth?.token]);
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-
-    if (form.checkValidity()) {
-      onCreate(nombre, direccion, ciudadId, nit, numeroHabitaciones);
-      setNombre("");
-      setDireccion("");
-      setCiudadId("");
-      setNit("");
-      setNumeroHabitaciones(0);
-      setValidated(false);
-      onClose();
-    } else {
-      form.reportValidity();
-      setValidated(true);
-    }
-  };
+  const { hotelData, setHotelData, ciudades, validated, handleSubmit } = useAddHotel(onCreate);
 
   return (
     <Modal show={show} onHide={onClose}>
@@ -74,14 +16,14 @@ const AddHotelModal = ({ show, onClose, onCreate }: Props) => {
         <Modal.Title>Agregar Nuevo Hotel</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form noValidate className={validated ? "was-validated" : ""} onSubmit={handleSubmit}>
+        <Form noValidate className={validated ? "was-validated" : ""} onSubmit={(e) => handleSubmit(e, onClose)}>
           {/* Nombre */}
           <Form.Group>
             <Form.Label>Nombre</Form.Label>
             <Form.Control 
               type="text" 
-              value={nombre} 
-              onChange={(e) => setNombre(e.target.value)} 
+              value={hotelData.nombre} 
+              onChange={(e) => setHotelData({ ...hotelData, nombre: e.target.value })} 
               required 
             />
             <div className="invalid-feedback">El nombre es obligatorio.</div>
@@ -92,8 +34,8 @@ const AddHotelModal = ({ show, onClose, onCreate }: Props) => {
             <Form.Label>Dirección</Form.Label>
             <Form.Control 
               type="text" 
-              value={direccion} 
-              onChange={(e) => setDireccion(e.target.value)} 
+              value={hotelData.direccion} 
+              onChange={(e) => setHotelData({ ...hotelData, direccion: e.target.value })} 
               required 
             />
             <div className="invalid-feedback">La dirección es obligatoria.</div>
@@ -103,8 +45,8 @@ const AddHotelModal = ({ show, onClose, onCreate }: Props) => {
           <Form.Group className="mt-3">
             <Form.Label>Ciudad</Form.Label>
             <Form.Select 
-              value={ciudadId} 
-              onChange={(e) => setCiudadId(e.target.value)} 
+              value={hotelData.ciudad} 
+              onChange={(e) => setHotelData({ ...hotelData, ciudad: e.target.value })} 
               required
             >
               <option value="">Seleccione una ciudad</option>
@@ -126,8 +68,8 @@ const AddHotelModal = ({ show, onClose, onCreate }: Props) => {
             <Form.Label>NIT</Form.Label>
             <Form.Control 
               type="text" 
-              value={nit} 
-              onChange={(e) => setNit(e.target.value)} 
+              value={hotelData.nit} 
+              onChange={(e) => setHotelData({ ...hotelData, nit: e.target.value })} 
               pattern="^\d{10}-\d{1}$"
               required 
             />
@@ -139,8 +81,8 @@ const AddHotelModal = ({ show, onClose, onCreate }: Props) => {
             <Form.Label>Número de Habitaciones</Form.Label>
             <Form.Control 
               type="number" 
-              value={numeroHabitaciones} 
-              onChange={(e) => setNumeroHabitaciones(Number(e.target.value))} 
+              value={hotelData.capacidad} 
+              onChange={(e) => setHotelData({ ...hotelData, capacidad: Number(e.target.value) })} 
               min="1"
               required 
             />

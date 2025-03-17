@@ -3,7 +3,7 @@ import LoginPage from "../pages/LoginPage";
 import HotelsPage from "../pages/HotelsPage";
 import ProtectedRoute from "./ProtectedRoute";
 import AssignRoomPage from "../pages/AssignRoomPage";
-import RoomsPage from "../pages/RoomsPage";
+import RoomPage from "../pages/RoomPage";
 import EditRoomPage from "../pages/EditRoomPage"; 
 const AppRouter = () => {
   return (
@@ -20,7 +20,7 @@ const AppRouter = () => {
           }
         />
        
-        <Route path="/rooms/:hotelId" element={<ProtectedRoute><RoomsPage /></ProtectedRoute>} />
+        <Route path="/rooms/:hotelId" element={<ProtectedRoute><RoomPage /></ProtectedRoute>} />
         <Route path="/assign-room/:hotelId" element={<ProtectedRoute><AssignRoomPage /></ProtectedRoute>} />
         <Route path="/edit-room/:hotelId/:roomId" element={<ProtectedRoute><EditRoomPage /></ProtectedRoute>} />
       </Routes>

@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (!response.data.ok) {
         toast.error(response.data.message);
-        return false; // ❌ Login fallido
+        return false;   
       }
 
       setToken(response.data.token);
