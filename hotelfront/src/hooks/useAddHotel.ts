@@ -54,17 +54,30 @@ const useAddHotel = (refreshHotels: () => void) => {
     }
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      await api.post("/hotels", hotelData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      toast.success("Hotel agregado correctamente");
-      refreshHotels();
-      handleClose();
-    } catch (error) {
-      toast.error("Error al agregar el hotel");
+  const token = localStorage.getItem("token");
+  await api.post("/hotels", hotelData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  toast.success("Hotel agregado correctamente");
+  refreshHotels();
+  handleClose();
+    } catch (error:any) {
+      if (error.response && error.response.data && error.response.data.errors) {
+        const errores = error.response.data.errors; // Accede a 'errors' directamente
+
+        if (errores) {
+          if (errores.nombre) {
+            toast.error(errores.nombre[0]);
+          }
+          if (errores.nit) {
+            toast.error(errores.nit[0]);
+          }
+        }
+      } else {
+        toast.error("Error al agregar el hotel");
+      }
     } finally {
       setLoading(false);
     }
