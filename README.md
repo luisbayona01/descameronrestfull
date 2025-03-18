@@ -137,7 +137,7 @@ Puedes iniciar sesión con las siguientes credenciales:
 
 🌐 Entorno de producción
 También puedes probar la aplicación funcionando en el entorno de producción:
-shCopiarhttps://hotelesadmin.godelivery.site/
+ Copiar https://hotelesadmin.godelivery.site/
 Credenciales de acceso
 Para ambos entornos (desarrollo y producción), puedes iniciar sesión con las siguientes credenciales:
 
