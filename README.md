@@ -135,4 +135,13 @@ Puedes iniciar sesión con las siguientes credenciales:
 - **Email:** `admin@example.com`
 - **Contraseña:** `password123`
 
+🌐 Entorno de producción
+También puedes probar la aplicación funcionando en el entorno de producción:
+shCopiarhttps://hotelesadmin.godelivery.site/
+Credenciales de acceso
+Para ambos entornos (desarrollo y producción), puedes iniciar sesión con las siguientes credenciales:
+
+Email: admin@example.com
+Contraseña: password123
+
 
